@@ -1,19 +1,17 @@
-import com.soywiz.klock.milliseconds
-import com.soywiz.korev.addEventListener
-import com.soywiz.korev.dispatch
-import com.soywiz.korge.input.onClick
-import com.soywiz.korge.lipsync.LipSyncEvent
-import com.soywiz.korge.lipsync.readVoice
-import com.soywiz.korge.scene.Scene
-import com.soywiz.korge.view.SContainer
-import com.soywiz.korge.view.image
-import com.soywiz.korge.view.position
-import com.soywiz.korim.atlas.MutableAtlasUnit
-import com.soywiz.korim.atlas.readAtlas
-import com.soywiz.korim.format.readBitmap
-import com.soywiz.korim.format.readBitmapSlice
-import com.soywiz.korio.async.launchImmediately
-import com.soywiz.korio.file.std.resourcesVfs
+import korlibs.time.milliseconds
+import korlibs.korge.input.onClick
+import korlibs.korge.lipsync.LipSyncEvent
+import korlibs.korge.lipsync.readVoice
+import korlibs.korge.scene.Scene
+import korlibs.korge.view.SContainer
+import korlibs.korge.view.image
+import korlibs.korge.view.position
+import korlibs.image.atlas.MutableAtlasUnit
+import korlibs.image.atlas.readAtlas
+import korlibs.image.format.readBitmap
+import korlibs.image.format.readBitmapSlice
+import korlibs.io.async.launchImmediately
+import korlibs.io.file.std.resourcesVfs
 
 class MainLipSyncScene : Scene() {
     override suspend fun SContainer.sceneMain() {
@@ -21,7 +19,7 @@ class MainLipSyncScene : Scene() {
         val lipsByChar = "ABCDEFGHX".associate { it to resourcesVfs["lips/lisa-$it.png"].readBitmapSlice(atlas = atlas) }
         val lips = image(lipsByChar['A']!!)
         val lips2 = image(lipsByChar['A']!!).position(400, 0)
-        addOnEvent<LipSyncEvent> {
+        onEvent(LipSyncEvent) {
             println(it)
             if (it.name == "lisa") {
                 lips2.bitmap = lipsByChar[it.lip]!!

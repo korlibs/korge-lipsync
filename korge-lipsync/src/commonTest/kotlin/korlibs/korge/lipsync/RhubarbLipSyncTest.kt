@@ -1,4 +1,4 @@
-package com.soywiz.korge.lipsync
+package korlibs.korge.lipsync
 
 class RhubarbLipSyncTest {
     /*

@@ -1,16 +1,17 @@
-package com.soywiz.korge.lipsync
+package korlibs.korge.lipsync
 
-import com.soywiz.korau.format.*
-import com.soywiz.korau.format.mp3.*
-import com.soywiz.korau.sound.*
-import com.soywiz.korge.resources.*
-import com.soywiz.korio.dynamic.*
-import com.soywiz.korio.file.*
-import com.soywiz.korio.file.std.*
-import com.soywiz.korio.serialization.json.*
-import com.soywiz.korio.util.*
-import com.soywiz.krypto.*
-import com.soywiz.krypto.encoding.*
+import korlibs.audio.format.*
+import korlibs.audio.format.mp3.*
+import korlibs.audio.sound.*
+import korlibs.korge.resources.*
+import korlibs.io.dynamic.*
+import korlibs.io.file.*
+import korlibs.io.file.std.*
+import korlibs.io.serialization.json.*
+import korlibs.io.util.*
+import korlibs.crypto.*
+import korlibs.crypto.encoding.*
+import korlibs.memory.Platform
 import java.io.*
 import java.net.*
 
@@ -18,7 +19,7 @@ open class LipsyncResourceProcessor : ResourceProcessor("voice.wav", "voice.mp3"
 	companion object : LipsyncResourceProcessor() {
 		private val nativeAudioFormats = AudioFormats().register(
             WAV, FastMP3Decoder,
-			//ServiceLoader.load(com.soywiz.korau.format.AudioFormat::class.java).toList()
+			//ServiceLoader.load(korlibs.audio.format.AudioFormat::class.java).toList()
 		)
 	}
 
@@ -40,10 +41,10 @@ open class LipsyncResourceProcessor : ResourceProcessor("voice.wav", "voice.mp3"
             "rhubarb"
         )
 		when {
-			OS.isMac -> base.copy(exe = "rhubarb-mac")
-			OS.isLinux -> base.copy(exe = "rhubarb-linux")
-			OS.isWindows -> base.copy(exe = "rhubarb-win.exe")
-			else -> error("Operating system '${OS.rawName}', '${OS.platformName}' not supported")
+			Platform.isMac -> base.copy(exe = "rhubarb-mac")
+			Platform.isLinux -> base.copy(exe = "rhubarb-linux")
+			Platform.isWindows -> base.copy(exe = "rhubarb-win.exe")
+			else -> error("Operating system '${Platform.rawOsName}', '${Platform.rawPlatformName}' not supported")
 		}
 	}
 
@@ -77,7 +78,7 @@ open class LipsyncResourceProcessor : ResourceProcessor("voice.wav", "voice.mp3"
 			println("Extracting $localZipFile ...")
 			val zip = localZipFile.openAsZip()
 			//localZipFile.openAsZip().copyToTree(rootOutputFolder)
-			zip.copyToTree(rootOutputFolder)
+			zip.copyToRecursively(rootOutputFolder)
 
 			println("Done")
 

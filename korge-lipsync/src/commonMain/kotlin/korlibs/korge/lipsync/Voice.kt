@@ -1,18 +1,21 @@
-package com.soywiz.korge.lipsync
+package korlibs.korge.lipsync
 
-import com.soywiz.kds.iterators.*
-import com.soywiz.klock.TimeSpan
-import com.soywiz.klock.milliseconds
-import com.soywiz.klock.seconds
-import com.soywiz.korau.sound.Sound
-import com.soywiz.korau.sound.readSound
-import com.soywiz.korev.Event
-import com.soywiz.korev.dispatch
-import com.soywiz.korge.baseview.BaseView
-import com.soywiz.korge.component.EventComponent
-import com.soywiz.korge.view.*
-import com.soywiz.korge.view.animation.*
-import com.soywiz.korio.file.VfsFile
+import korlibs.audio.sound.Sound
+import korlibs.audio.sound.readSound
+import korlibs.datastructure.Extra
+import korlibs.datastructure.getExtra
+import korlibs.datastructure.iterators.fastForEach
+import korlibs.event.EventType
+import korlibs.event.TypedEvent
+import korlibs.io.file.VfsFile
+import korlibs.korge.view.BaseView
+import korlibs.korge.view.View
+import korlibs.korge.view.Views
+import korlibs.korge.view.animation.PlayableWithName
+import korlibs.korge.view.descendantsOfType
+import korlibs.time.TimeSpan
+import korlibs.time.milliseconds
+import korlibs.time.seconds
 
 class LipSync(val lipsync: String) {
 	val totalTime: TimeSpan get() = (lipsync.length * 16).milliseconds
@@ -53,7 +56,9 @@ class Voice(val voice: Sound, val lipsync: LipSync) {
 	}
 }
 
-data class LipSyncEvent(var name: String = "", var time: TimeSpan = 0.seconds, var lip: Char = 'X') : Event() {
+data class LipSyncEvent(var name: String = "", var time: TimeSpan = 0.seconds, var lip: Char = 'X') : TypedEvent<LipSyncEvent>(LipSyncEvent) {
+	companion object : EventType<LipSyncEvent>
+
 	fun set(name: String, elapsedTime: TimeSpan, lip: Char) = apply {
 		this.name = name
 		this.time = elapsedTime
@@ -63,19 +68,19 @@ data class LipSyncEvent(var name: String = "", var time: TimeSpan = 0.seconds, v
 	val timeMs: Int get() = time.millisecondsInt
 }
 
-class LipSyncComponent(override val view: BaseView) : EventComponent {
-	override fun onEvent(event: Event) {
-		if (event is LipSyncEvent) {
-			val name = view.getPropString("lipsync")
-            if (event.name != name) return
-            (view as View?)?.descendantsOfType<PlayableWithName>()?.fastForEach {
-                it.play("${event.lip}")
-            }
-        }
+class LipSyncComponent(val view: BaseView) {
+	init {
+		view.onEvent(LipSyncEvent) { event ->
+			val name = view.getExtra("lipsync")
+			if (event.name != name) return@onEvent
+			(view as View?)?.descendantsOfType<PlayableWithName>()?.fastForEach {
+				it.play("${event.lip}")
+			}
+		}
 	}
 }
 
-fun View.lipsync() = this.getOrCreateComponentEvent<LipSyncComponent> { LipSyncComponent(it) }
+val View.lipsync by Extra.PropertyThis { LipSyncComponent(this) }
 
 suspend fun VfsFile.readVoice(): Voice {
 	val lipsyncFile = this.withExtension("lipsync")

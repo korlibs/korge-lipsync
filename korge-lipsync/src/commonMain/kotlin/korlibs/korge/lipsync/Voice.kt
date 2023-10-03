@@ -15,6 +15,7 @@ import korlibs.korge.view.animation.PlayableWithName
 import korlibs.korge.view.descendantsOfType
 import korlibs.time.TimeSpan
 import korlibs.time.milliseconds
+import korlibs.time.millisecondsInt
 import korlibs.time.seconds
 
 class LipSync(val lipsync: String) {

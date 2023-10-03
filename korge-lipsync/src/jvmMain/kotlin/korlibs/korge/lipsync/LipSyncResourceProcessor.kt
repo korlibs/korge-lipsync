@@ -1,5 +1,6 @@
 package korlibs.korge.lipsync
 
+/*
 import korlibs.audio.format.*
 import korlibs.audio.format.mp3.*
 import korlibs.audio.sound.*
@@ -11,7 +12,9 @@ import korlibs.io.serialization.json.*
 import korlibs.io.util.*
 import korlibs.crypto.*
 import korlibs.crypto.encoding.*
+import korlibs.encoding.unhex
 import korlibs.memory.Platform
+import korlibs.platform.Platform
 import java.io.*
 import java.net.*
 
@@ -147,3 +150,4 @@ open class LipsyncResourceProcessor : ResourceProcessor("voice.wav", "voice.mp3"
 		}
 	}
 }
+*/
